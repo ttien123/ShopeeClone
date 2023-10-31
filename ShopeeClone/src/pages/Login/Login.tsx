@@ -1,17 +1,22 @@
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from 'react-query';
+import { useContext } from 'react';
 
 import { schema, Schema } from 'src/utils/rules';
-import { login } from 'src/apis/auth.api';
+import authApi from 'src/apis/auth.api';
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils';
 import { ErrorResponse } from 'src/types/utils.type';
 import Input from 'src/components/Input';
+import { AppContext } from 'src/contexts/app.context';
+import Button from 'src/components/Button';
 
-type FormData = Omit<Schema, 'confirm_password'>;
-const loginSchema = schema.omit(['confirm_password']);
+type FormData = Pick<Schema, 'email' | 'password'>;
+const loginSchema = schema.pick(['email', 'password']);
 const Login = () => {
+    const { setIsAuthenticated, setProfile } = useContext(AppContext);
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -22,13 +27,15 @@ const Login = () => {
     });
 
     const loginMutation = useMutation({
-        mutationFn: (body: Omit<FormData, 'confirm_password'>) => login(body),
+        mutationFn: (body: Omit<FormData, 'confirm_password'>) => authApi.login(body),
     });
 
     const onSubmit = handleSubmit((data) => {
         loginMutation.mutate(data, {
             onSuccess: (data) => {
-                console.log(data);
+                setIsAuthenticated(true);
+                setProfile(data.data.data.user);
+                navigate('/');
             },
             onError: (error) => {
                 if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
@@ -73,9 +80,13 @@ const Login = () => {
                                 placeholder="Password"
                                 autoComplete="on"
                             />
-                            <button className="w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600">
+                            <Button
+                                className=" flex justify-center items-center w-full py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600"
+                                isLoading={loginMutation.isLoading}
+                                disabled={loginMutation.isLoading}
+                            >
                                 Đăng nhập
-                            </button>
+                            </Button>
                             <div className="flex items-center justify-center mt-8">
                                 <span className="text-slate-400">bạn chưa có tài khoản?</span>
                                 <Link className="text-red-400 ml-1" to={'/register'}>

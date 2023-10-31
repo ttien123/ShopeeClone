@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@types/node": "^20.8.6",
     "axios": "^1.5.1",
+    "classnames": "^2.3.2",
     "framer-motion": "^10.16.4",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "postcss": "^8.4.31",
+    "prettier-plugin-tailwindcss": "^0.5.6",
     "tailwindcss": "^3.3.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
