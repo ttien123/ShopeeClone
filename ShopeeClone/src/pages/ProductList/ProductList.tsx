@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
-import AsideFilter from './AsideFilter';
-import Product from './Product';
-import SortProductList from './SortPRroductList';
+import AsideFilter from './components/AsideFilter';
+import Product from './components/Product';
+import SortProductList from './components/SortPRroductList';
 import useQueryParams from 'src/hooks/useQueryParams';
 import productApi from 'src/apis/product.api';
 import Pagination from 'src/components/Pagination';
