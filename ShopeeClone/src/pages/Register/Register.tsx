@@ -2,7 +2,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation } from 'react-query';
-import { omit } from 'lodash';
+// lodash kh có tính năng tree-shaking(import như dưới là import tất cả thư viện vào) nên sẽ import trực tiếp
+// import { omit } from 'lodash';
+import omit from 'lodash/omit';
+
 import { useContext } from 'react';
 
 import { schema, Schema } from 'src/utils/rules';
@@ -42,9 +45,11 @@ const Register = () => {
             onError: (error) => {
                 if (isAxiosUnprocessableEntityError<ErrorResponse<Omit<FormData, 'confirm_password'>>>(error)) {
                     const formError = error.response?.data.data;
+                    console.log(formError);
 
                     if (formError) {
                         Object.keys(formError).forEach((key) => {
+                            console.log(key);
                             setError(key as keyof Omit<FormData, 'confirm_password'>, {
                                 message: formError[key as keyof Omit<FormData, 'confirm_password'>],
                                 type: 'Server',

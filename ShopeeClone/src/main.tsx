@@ -9,11 +9,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AppProvider } from './contexts/app.context';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             refetchOnWindowFocus: false,
+            retry: 0,
         },
     },
 });
@@ -22,7 +24,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
                 <AppProvider>
-                    <App />
+                    <ErrorBoundary>
+                        <App />
+                    </ErrorBoundary>
                 </AppProvider>
                 <ReactQueryDevtools initialIsOpen={false} />
             </QueryClientProvider>

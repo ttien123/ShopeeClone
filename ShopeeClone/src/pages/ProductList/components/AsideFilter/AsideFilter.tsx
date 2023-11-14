@@ -1,7 +1,6 @@
 import { Link, createSearchParams, useNavigate } from 'react-router-dom';
 import Button from 'src/components/Button';
 import path from 'src/constants/path';
-import { QueryConfig } from '../../ProductList';
 import { Category } from 'src/types/category.type';
 import classNames from 'classnames';
 import InputNumber from 'src/components/InputNumber';
@@ -11,7 +10,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { ObjectSchema } from 'yup';
 import { NoUndefinedField } from 'src/types/utils.type';
 import RatingStars from '../RatingStars';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
+// import { omit } from 'lodash';
+import { QueryConfig } from 'src/hooks/useQueryConfig';
+import InputV2 from 'src/components/InputV2';
 
 interface Props {
     queryConfig: QueryConfig;
@@ -135,7 +137,8 @@ const AsideFilter = ({ queryConfig, categories }: Props) => {
                 <div>Khoảng giá</div>
                 <form className="mt-2" onSubmit={onSubmit}>
                     <div className="flex items-start">
-                        <Controller
+                        {/* sử dụng Controller khi không thể truyền register qua component */}
+                        {/* <Controller
                             control={control}
                             name="price_min"
                             render={({ field }) => {
@@ -155,8 +158,19 @@ const AsideFilter = ({ queryConfig, categories }: Props) => {
                                     />
                                 );
                             }}
+                        /> */}
+                        <InputV2
+                            control={control}
+                            name="price_min"
+                            type="text"
+                            className="grow"
+                            placeholder="₫ TỪ"
+                            classNameInput="p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm"
+                            onChange={() => {
+                                trigger('price_max');
+                            }}
+                            classNameError="hidden"
                         />
-
                         <div className="mx-2 mt-2 shrink-0">-</div>
                         <Controller
                             control={control}

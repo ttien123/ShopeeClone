@@ -2,34 +2,14 @@ import { useQuery } from 'react-query';
 import AsideFilter from './components/AsideFilter';
 import Product from './components/Product';
 import SortProductList from './components/SortPRroductList';
-import useQueryParams from 'src/hooks/useQueryParams';
 import productApi from 'src/apis/product.api';
 import Pagination from 'src/components/Pagination';
-import { omitBy, isUndefined } from 'lodash';
 import { productListConfig } from 'src/types/product.type';
 import categoryApi from 'src/apis/category.api';
-
-export type QueryConfig = {
-    [key in keyof productListConfig]: string;
-};
+import useQueryConfig from 'src/hooks/useQueryConfig';
 
 const ProductList = () => {
-    const queryParams: QueryConfig = useQueryParams();
-    const queryConfig: QueryConfig = omitBy(
-        {
-            page: queryParams.page || '1',
-            limit: queryParams.limit,
-            sort_by: queryParams.sort_by,
-            exclude: queryParams.exclude,
-            name: queryParams.name,
-            order: queryParams.order,
-            rating_filter: queryParams.rating_filter,
-            price_max: queryParams.price_max,
-            price_min: queryParams.price_min,
-            category: queryParams.category,
-        },
-        isUndefined,
-    );
+    const queryConfig = useQueryConfig();
 
     const { data: productData } = useQuery({
         queryKey: ['products', queryConfig],
@@ -37,6 +17,7 @@ const ProductList = () => {
             return productApi.getProducts(queryConfig as productListConfig);
         },
         keepPreviousData: true,
+        staleTime: 3 * 60 * 1000,
     });
 
     const { data: categoriesData } = useQuery({

@@ -1,8 +1,8 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import ProductRating from 'src/components/ProductRating';
+import path from 'src/constants/path';
 import { Product as productType } from 'src/types/product.type';
-import { formatCurrency, formatNumberToSocialStyle } from 'src/utils/utils';
+import { formatCurrency, formatNumberToSocialStyle, generateNameId } from 'src/utils/utils';
 
 interface Props {
     product: productType;
@@ -10,7 +10,7 @@ interface Props {
 
 const Product = ({ product }: Props) => {
     return (
-        <Link to={'/'}>
+        <Link to={`${path.home}${generateNameId({ name: product.name, id: product._id })}`}>
             <div className="bg-white shadow rounded-sm overflow-hidden hover:translate-y-[-0.04rem] hover:shadow-md duration-100 transition-transform">
                 <div className="w-full pt-[100%] relative">
                     <img
@@ -34,7 +34,7 @@ const Product = ({ product }: Props) => {
                     <div className="mt-3 flex items-center justify-end">
                         <ProductRating rating={product.rating} />
                         <div className="ml-2 text-sm">
-                            <span>{formatNumberToSocialStyle(product.sold)}</span>
+                            <span>₫{formatNumberToSocialStyle(product.sold)}</span>
                             <span className="ml-1">Đã bán</span>
                         </div>
                     </div>

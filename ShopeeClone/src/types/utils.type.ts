@@ -7,6 +7,7 @@ export interface ErrorResponse<Data> {
     data: Data;
 }
 
+// NoUndefinedField dùng để loại bỏ những trường undefined
 export type NoUndefinedField<T> = {
     [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>;
 };

@@ -4,13 +4,14 @@ import { toast } from 'react-toastify';
 import { AuthResponse } from 'src/types/auth.type';
 import { clearLS, getAccessTokenFromLS, setAccessTokenToLS, setProfileToLS } from './auth';
 import path from 'src/constants/path';
+import config from 'src/constants/config';
 class Http {
     instance: AxiosInstance;
     private accessToken: string;
     constructor() {
         this.accessToken = getAccessTokenFromLS();
         this.instance = axios.create({
-            baseURL: 'https://api-ecom.duthanhduoc.com/',
+            baseURL: config.baseUrl,
             timeout: 10000,
             headers: {
                 'Content-Type': 'application/json',
@@ -46,11 +47,18 @@ class Http {
             },
             function (error: AxiosError) {
                 if (error.response?.status !== HttpStatusCode.UnprocessableEntity) {
-                    console.log(error);
+                    // console.log(error);
 
                     const data: any | undefined = error.response?.data;
-                    const message = data.message || error.message;
+                    console.log(data, error);
+                    const message = data?.message || error.message;
                     toast.error(message);
+                }
+
+                if (error.response?.status === HttpStatusCode.Unauthorized) {
+                    clearLS();
+                    // cách 1: dùng window.location.reload nhưng cách này kh tốt vì sẽ bị reload trang web 2 lần
+                    // cách 2 dùng eventTarget
                 }
                 return Promise.reject(error);
             },
