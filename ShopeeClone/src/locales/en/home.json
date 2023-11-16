@@ -1,0 +1,10 @@
+{
+    "aside filter": {
+        "all categories": "All categories",
+        "filter search": "Filter"
+    },
+    "auth": {
+        "register": "register",
+        "login": "login"
+    }
+}

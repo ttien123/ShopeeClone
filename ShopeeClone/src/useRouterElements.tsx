@@ -134,12 +134,13 @@ const useRouterElements = () => {
                         </RegisterLayout>
                     ),
                 },
-
                 {
                     path: path.register,
                     element: (
                         <RegisterLayout>
-                            <Register />
+                            <Suspense>
+                                <Register />
+                            </Suspense>
                         </RegisterLayout>
                     ),
                 },
