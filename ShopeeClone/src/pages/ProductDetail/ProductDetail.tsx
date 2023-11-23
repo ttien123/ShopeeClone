@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import productApi from 'src/apis/product.api';
@@ -13,14 +13,18 @@ import { purchasesStatus } from 'src/constants/purchase';
 import { toast } from 'react-toastify';
 import path from 'src/constants/path';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
+import { convert } from 'html-to-text';
+import { AppContext } from 'src/contexts/app.context';
 
 const ProductDetail = () => {
+    const { isAuthenticated } = useContext(AppContext);
     const { t } = useTranslation(['product']);
+    const navigate = useNavigate();
 
     const queryClient = useQueryClient();
     const [buyCount, setBuyCount] = useState(1);
     const { nameId } = useParams();
-    const navigate = useNavigate();
 
     const id = getIdFromNameId(nameId as string);
     const { data: productDetailData } = useQuery({
@@ -109,33 +113,55 @@ const ProductDetail = () => {
     };
 
     const addToCart = () => {
-        addToCartMutation.mutate(
-            { buy_count: buyCount, product_id: product?._id as string },
-            {
-                onSuccess: (data) => {
-                    queryClient.invalidateQueries({ queryKey: ['purchase', { status: purchasesStatus.inCart }] });
-                    toast.success(data.data.message, {
-                        autoClose: 1000,
-                    });
+        if (isAuthenticated) {
+            addToCartMutation.mutate(
+                { buy_count: buyCount, product_id: product?._id as string },
+                {
+                    onSuccess: (data) => {
+                        queryClient.invalidateQueries({ queryKey: ['purchase', { status: purchasesStatus.inCart }] });
+                        toast.success(data.data.message, {
+                            autoClose: 1000,
+                        });
+                    },
                 },
-            },
-        );
+            );
+        } else {
+            navigate(`${path.login}`);
+        }
     };
 
     const buyNow = async () => {
-        const res = await addToCartMutation.mutateAsync({ buy_count: buyCount, product_id: product?._id as string });
-        const purchase = res.data.data;
-        navigate(path.cart, {
-            state: {
-                purchaseId: purchase._id,
-            },
-        });
+        if (isAuthenticated) {
+            const res = await addToCartMutation.mutateAsync({
+                buy_count: buyCount,
+                product_id: product?._id as string,
+            });
+            const purchase = res.data.data;
+            navigate(path.cart, {
+                state: {
+                    purchaseId: purchase._id,
+                },
+            });
+        } else {
+            navigate(`${path.login}`);
+        }
     };
 
     if (!product) return null;
 
     return (
         <div className="bg-gray-200 py-6">
+            <Helmet>
+                <title>{product.name} | Shopee clone</title>
+                <meta
+                    name="description"
+                    content={convert(product.description, {
+                        limits: {
+                            maxInputLength: 150,
+                        },
+                    })}
+                />
+            </Helmet>
             <div className="container">
                 <div className="bg-white p4 shadow">
                     <div className="grid grid-cols-12 gap-9">
