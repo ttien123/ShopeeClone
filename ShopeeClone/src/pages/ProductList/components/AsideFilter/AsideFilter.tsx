@@ -33,6 +33,7 @@ const AsideFilter = ({ queryConfig, categories }: Props) => {
         control,
         handleSubmit,
         trigger,
+        reset,
         formState: { errors },
     } = useForm<FormData>({
         defaultValues: {
@@ -54,12 +55,13 @@ const AsideFilter = ({ queryConfig, categories }: Props) => {
     });
 
     const handleRemoveAll = () => {
-        navigate({
-            pathname: path.home,
-            search: createSearchParams(
-                omit(queryConfig, ['price_min', 'price_max', 'category', 'rating_filter']),
-            ).toString(),
-        });
+        reset(),
+            navigate({
+                pathname: path.home,
+                search: createSearchParams(
+                    omit(queryConfig, ['price_min', 'price_max', 'category', 'rating_filter']),
+                ).toString(),
+            });
     };
 
     return (
@@ -140,7 +142,7 @@ const AsideFilter = ({ queryConfig, categories }: Props) => {
                 <form className="mt-2" onSubmit={onSubmit}>
                     <div className="flex items-start">
                         {/* sử dụng Controller khi không thể truyền register qua component */}
-                        {/* <Controller
+                        <Controller
                             control={control}
                             name="price_min"
                             render={({ field }) => {
@@ -160,8 +162,8 @@ const AsideFilter = ({ queryConfig, categories }: Props) => {
                                     />
                                 );
                             }}
-                        /> */}
-                        <InputV2
+                        />
+                        {/* <InputV2
                             control={control}
                             name="price_min"
                             type="text"
@@ -172,7 +174,7 @@ const AsideFilter = ({ queryConfig, categories }: Props) => {
                                 trigger('price_max');
                             }}
                             classNameError="hidden"
-                        />
+                        /> */}
                         <div className="mx-2 mt-2 shrink-0">-</div>
                         <Controller
                             control={control}
